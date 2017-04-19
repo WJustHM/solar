@@ -1,0 +1,13 @@
+message TrafficInfo
+{
+    required string Id = 1;
+    required string Time  = 2;
+    required uint32 TotalVehicle  = 4;
+    required uint32 LargeVehicle  = 5;
+    required uint32 MediumVehicle  = 6;
+    required uint32 SmallVehicle  = 7;
+    required uint32 OtherVehicle  = 8;
+    required int32  DriveChan = 2;
+    required float  AverageSpeed = 5;
+
+}

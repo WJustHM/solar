@@ -1,0 +1,17 @@
+message AlarmInfo
+{
+	required string Id = 1; //报警标号
+	required string VehicleId = 1;　//车辆信息编号
+	required string PreyInfoId = 1; // 布控信息编号
+	required uint32 Priority = 2; //报警级别　同于布控级别
+	required string DeviceId = 1;
+	required string Time = 4;
+	required uint32 Type = 5;//报警类型　同于布控类型
+	optional string PlateLicense = 6;
+	optional string PlateColor = 2;
+	optional string PlateType = 1;
+	optional string VehicleLogoRecog = 8;
+	optional string VehicleColor = 4;
+	optional int32 　VehicleType = 2;
+	optional float 　VehicleSpeed = 5;
+}

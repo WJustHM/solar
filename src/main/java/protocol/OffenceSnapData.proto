@@ -1,0 +1,74 @@
+package protocol;
+
+option java_package = "protocol";
+
+option java_outer_classname = "OffenceSnapDataProtos";
+
+
+message PlateInfoModel
+{
+  required string PlateType = 1;
+  required string Color = 2;
+  required int32 Bright = 3;
+  required int32 LicenseLen = 4;
+  required int32 Country = 5;
+  required string License = 6;
+  required string Believe = 7;
+}
+
+message VehicleInfoModel
+{
+  required int32 Index = 1;
+  required int32 VehicleType = 2;
+  required int32 ChanIndex = 3;
+  required int32 ColorDepth = 4;
+  required string Color = 5;
+  required float Speed = 6;
+  required float Length = 7;
+  required string VehicleLogoRecog = 8;
+  required string VehicleSubLogoRecog = 9;
+  required string VehicleModel = 10;
+  required int32 VehicleAttribute = 11;//车辆属性
+}
+
+message PlateRectModel
+{
+  required int32 X = 1;
+  required int32 Y = 2;
+  required int32 Width = 3;
+  required int32 Height = 4;
+}
+
+message PicInfoModel
+{
+  required int32 Type = 1;
+  required int32 PicRecogMode = 2;
+  required int32 RedLightTime = 3;
+  required PlateRectModel PlateRect = 4;
+  required bytes Data = 5;
+}
+
+message OffenceSnapData
+{
+  required string Id = 1;//设备编号
+  required int32 DriveChan = 2;//车道数量
+  required int32 IllegalType = 5;//违法类型
+  required string IllegalSubType = 6;//违法子类型
+  required int32 SpeedLimit = 9;//限速值
+  required PlateInfoModel PlateInfo = 10;
+  required VehicleInfoModel VehicleInfo = 11;
+  required string MonitoringSiteID = 12;//监测点
+  required int32 Dir = 13;//方向
+  required int32 DetectType = 14;//检测方式
+  required int32 PilotSafebelt = 15;
+  required int32 CopilotSafebelt = 16;
+  required int32 PilotSubVisor = 17;
+  required int32 CopilotSubVisor = 18;
+  required int32 PilotCall = 19;
+  required int32 AlarmDataType = 20;//报警类型
+  required string Time = 21;//过车时间
+  required int32 PicNum = 23;//图片数量
+  repeated PicInfoModel PicInfo = 24;//图片信息
+  optional int32 Validity = 25;//数据有效性 0：无效 1：有效
+  optional int32 WaitedLength = 26;//排队长度
+}
