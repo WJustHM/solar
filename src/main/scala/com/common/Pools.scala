@@ -35,7 +35,7 @@ trait Pools extends Logging with Serializable{
 
   private def getPoolConfig: PoolConfig = {
     val poolConfig: PoolConfig = new PoolConfig
-    poolConfig.setMaxTotal(100)
+    poolConfig.setMaxTotal(100)//限制的连接数
     poolConfig.setMaxIdle(100)
     poolConfig.setMaxWaitMillis(1000000)
     poolConfig.setTestOnBorrow(true)
