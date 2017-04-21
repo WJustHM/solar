@@ -3,7 +3,7 @@ package com.common
 /**
   * Created by xuefei_wang on 17-2-27.
   */
-object Constants extends  Serializable{
+object Constants extends Serializable {
 
   val APP_NAME = "DRIVER"
 
@@ -37,12 +37,11 @@ object Constants extends  Serializable{
   val KAFKA_MAX_REQUEST_SIZE = "1000973460"
 
 
-
   val ALLUXIO_PATH = "/APP/SOLAR/"
 
   val KAFKA_ILLEGAL_TOPIC = "Illegal"
 
-  val KAFKA_ALARM_TOPIC=""
+  val KAFKA_ALARM_TOPIC = ""
 
 
   val HBASE_TABLE_BASEINFO = "BaseInfo"
@@ -65,30 +64,30 @@ object Constants extends  Serializable{
 
   val ZOOKEEPER_ZNODE_PARENT = "/hbase-unsecure"
 
-  val HBASE_TABLE_ILLEGALINFO =""
+  val HBASE_TABLE_ILLEGALINFO = ""
 
   val HBASE_ILLEGALINFO_COLUMNFAMILY = ""
 
 
+  val ES_CLUSTER_NAME = "handge-cloud"
 
-  val ES_CLUSTER_NAME="handge-cloud"
 
-
+  //  val ES_URL = "localhost:9300"
   val ES_URL = "datanode1:9300,datanode2:9300,datanode3:9300"
 
 
-  val MYSQL_DRIVER="com.mysql.jdbc.Driver"
+  val MYSQL_DRIVER = "com.mysql.jdbc.Driver"
 
-  val MYSQL_USER_NAME="root"
+  val MYSQL_USER_NAME = "root"
 
-  val MYSQL_USER_PASSWORD="mysql"
+  val MYSQL_USER_PASSWORD = "mysql"
 
-  val MYSQL_JDBC_URL="jdbc:mysql://172.20.31.127:3306/solar"
+  val MYSQL_JDBC_URL = "jdbc:mysql://172.20.31.127:3306/solar"
 
 
-  val REDIS_HOST="DataStore"
+  val REDIS_HOST = "DataStore"
 
-  val REDIS_PORT=6379
+  val REDIS_PORT = 6379
 
 
 }
