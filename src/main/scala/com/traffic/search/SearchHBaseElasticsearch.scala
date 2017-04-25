@@ -95,7 +95,7 @@ class SearchHBaseElasticsearch extends Pools {
 
 
       // Elastic
-      bulkrequest.add(clientElastic.prepareIndex("twitter", "djj").setSource(
+      bulkrequest.add(clientElastic.prepareIndex("djj", "djj").setSource(
         XContentFactory.jsonBuilder().startObject()
           .field("ResultTime", time)
           .field("PlateColor", platecolor)
@@ -201,7 +201,7 @@ class SearchHBaseElasticsearch extends Pools {
 object SearchHBaseElasticsearch {
   def main(args: Array[String]): Unit = {
     val sbe = new SearchHBaseElasticsearch
-//    sbe.putDataHBaseElsaticserach
-    sbe.clienttestxpack
+    sbe.putDataHBaseElsaticserach
+//    sbe.clienttestxpack
   }
 }

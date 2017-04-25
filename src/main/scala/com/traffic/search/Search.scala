@@ -2,6 +2,8 @@ package com.traffic.search
 
 import java.text.SimpleDateFormat
 import java.util._
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 import com.common.Pools
 import org.apache.hadoop.hbase.TableName
@@ -32,7 +34,11 @@ class Search extends Pools {
   val DATASOURCE = "DATASOURCE"
   var num = 0;
 
-  def searchElasticHBase(start: String, end: String, PlateColor: String, vehicleBrand: String): Unit = {
+  def searchElasticHBase(vehicleBrand: String, PlateColor: String, Direction: String, tag: String
+                         , paper: String, sun: String, drop: String
+                         , secondBelt: String, crash: String, danger: String
+                         , starttime: String, endtime: String
+                        ): Unit = {
     //    val stype = start.split(" ")(0).split("\\-")(1).toInt
     //    val etype = end.split(" ")(0).split("\\-")(1).toInt
     val request: SearchRequestBuilder = client.prepareSearch().setIndices("vehicle").setTypes("result")
@@ -42,60 +48,68 @@ class Search extends Pools {
       "        {\n" +
       "          \"term\": {\n" +
       "            \"vehicleBrand.keyword\": {\n" +
-      "              \"value\": \"丰田\"\n" +
+      "              \"value\": \"" + vehicleBrand + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"PlateColor.keyword\": {\n" +
-      "              \"value\": \"黄\"\n" +
+      "              \"value\": \"" + PlateColor + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"Direction\": {\n" +
-      "              \"value\": \"1\"\n" +
+      "              \"value\": \"" + Direction + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"tag.keyword\": {\n" +
-      "              \"value\": \"true\"\n" +
+      "              \"value\": \"" + tag + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"paper.keyword\": {\n" +
-      "              \"value\": \"false\"\n" +
+      "              \"value\": \"" + paper + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"sun.keyword\": {\n" +
-      "              \"value\": \"false\"\n" +
+      "              \"value\": \"" + sun + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"drop.keyword\": {\n" +
-      "              \"value\": \"true\"\n" +
+      "              \"value\": \"" + drop + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"secondBelt.keyword\": {\n" +
-      "              \"value\": \"true\"\n" +
+      "              \"value\": \"" + secondBelt + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"crash.keyword\": {\n" +
-      "              \"value\": \"true\"\n" +
+      "              \"value\": \"" + crash + "\"\n" +
       "            }\n" + "          }\n" + "        },\n" + "        {\n" +
       "          \"term\": {\n" +
       "            \"danger.keyword\": {\n" +
-      "              \"value\": \"false\"\n" +
+      "              \"value\": \"" + danger + "\"\n" +
       "            }\n" + "          }\n" + "        }\n" + "      ],\n" +
       "      \"filter\": {\n" +
       "        \"range\": {\n" +
       "          \"ResultTime\": {\n" +
-      "            \"gte\": \"2017-04-10 15:37:02\",\n" +
-      "            \"lte\": \"2017-04-20 15:37:02\"\n" +
+      "            \"gte\": \"" + starttime + "\",\n" +
+      "            \"lte\": \"" + endtime + "\"\n" +
       "          }\n" + "        }\n" + "      }\n" + "    }\n" +
       "  }"
     var response: SearchResponse = request.setQuery(QueryBuilders.wrapperQuery(qu))
-      .addSort("ResultTime", SortOrder.ASC).setScroll(new TimeValue(60000)).setSize(100).execute().actionGet()
+      .addSort("ResultTime", SortOrder.ASC).setScroll(new TimeValue(60000)).setSize(50).execute().actionGet()
     println("-----Search hit total data:" + response.getHits.getTotalHits.toString)
     do {
       val starttime = System.currentTimeMillis()
       for (rs <- response.getHits.getHits) {
-        searchHBase(rs.getSource.get("resultId").toString)
-        searchRedis(TASK, rs.getSource.get("taskId").toString)
-        num+=1
+        Search.pool.submit(new Runnable {
+          override def run(): Unit = {
+            searchHBase(rs.getSource.get("resultId").toString)
+          }
+        })
+        Search.pool.submit(new Runnable {
+          override def run(): Unit = {
+            searchRedis(TASK, rs.getSource.get("taskId").toString)
+          }
+        })
+        num += 1
       }
       println(num)
       println("------------------------------Search Spend Time:" + (System.currentTimeMillis() - starttime))
@@ -139,7 +153,6 @@ class Search extends Pools {
     val vehicleBrand = Bytes.toString(result.getValue("Result".getBytes, "vehicleBrand".getBytes))
     val vehicleStyle = Bytes.toString(result.getValue("Result".getBytes, "vehicleStyle".getBytes))
     val LocationLeft = Bytes.toString(result.getValue("Result".getBytes, "LocationLeft".getBytes))
-    //    println(result.toString)
   }
 
   def searchCarnumber(start: String, end: String): Unit = {
@@ -193,11 +206,13 @@ class Search extends Pools {
 }
 
 object Search {
+  val pool: ExecutorService = Executors.newWorkStealingPool(5)
+
   def main(args: Array[String]): Unit = {
     val sbe = new Search
-    sbe.searchElasticHBase("2017-04-10 15:37:02", "2017-04-20 15:37:02", "白", "大众")
-    //    sbe.searchCarnumber("2017-02-20 15:30:14", "2017-06-20 15:30:14")
-    //        sbe.search4("2017-02-20 15:30:14")
+        sbe.searchElasticHBase("2017-04-10 15:37:02", "2017-04-20 15:37:02", "白", "大众")
+    //    sbe.searchCarnumber("2017-04-20 15:30:14", "2017-04-25 15:30:14")
+    //    sbe.search4("2017-04-20 15:30:14")
 
   }
 }
