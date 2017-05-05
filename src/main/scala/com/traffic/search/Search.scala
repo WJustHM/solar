@@ -260,7 +260,7 @@ class Search extends Pools {
             val camera = searchRedis(CAMERA, rs.getSource.get("cameraId").toString)
             val dataSource = searchRedis(DATASOURCE, rs.getSource.get("dataSourceId").toString)
             val reResult = joinRedis(task, camera, dataSource)
-
+            println(reResult.toString)
             task
           }
         })
@@ -279,8 +279,8 @@ object Search {
   def main(args: Array[String]): Unit = {
     val sbe = new Search
     //            sbe.searchElasticHBase("别克", "黄", "1", "true", "false", "false", "true", "true", "true", "false", "2017-04-10 15:37:02", "2017-04-20 15:37:02")
-    //        sbe.searchCarnumber("2017-04-20 15:30:14", "2017-04-25 15:30:14")
-//    sbe.searchLicense("2017-04-20 15:30:14", "粤", "2")
+    //            sbe.searchCarnumber("2017-04-20 15:30:14", "2017-04-25 15:30:14")
+    sbe.searchLicense("2017-04-20 15:30:14", "粤", "2")
 
   }
 }
