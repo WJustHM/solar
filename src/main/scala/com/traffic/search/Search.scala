@@ -1,21 +1,22 @@
 package com.traffic.search
 
 import java.text.SimpleDateFormat
-import java.util._
 import java.util
+import java.util.Map.Entry
+import java.util._
 import java.util.concurrent.{Callable, ExecutorService, Executors, Future}
 
 import com.common.Pools
 import org.apache.hadoop.hbase.TableName
-import org.apache.hadoop.hbase.client.{Connection, Get}
+import org.apache.hadoop.hbase.client.{Get, Connection => HbaseConnection}
 import org.apache.hadoop.hbase.util.Bytes
+import org.codehaus.jackson.map.ObjectMapper
 import org.elasticsearch.action.search.{SearchRequestBuilder, SearchResponse}
+import org.elasticsearch.common.unit.TimeValue
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.search.sort.SortOrder
-import org.apache.hadoop.hbase.client.{BufferedMutator, Get, Put, Table, Connection => HbaseConnection}
-import org.elasticsearch.common.unit.TimeValue
 import redis.clients.jedis.{HostAndPort, JedisCluster}
-import org.codehaus.jackson.map.ObjectMapper
+import collection.JavaConversions._
 
 /**
   * Created by linux on 17-4-20.
@@ -128,12 +129,27 @@ class Search extends Pools {
   //查询结果
   def joinElasticHBase(resHBase: Map[String, String], resRedis: Map[String, String]): Map[String, String] = {
     val result = new HashMap[String, String]
+    if (resHBase != null) {
+      result.putAll(resHBase)
+    }
+    if (resRedis != null) {
+      result.putAll(resRedis)
+    }
     result
   }
 
   //查询结果
   def joinRedis(resRedistask: Map[String, String], resRediscamera: Map[String, String], resRedisdataSource: Map[String, String]): Map[String, String] = {
     val result = new HashMap[String, String]
+    if (resRedistask != null) {
+      result.putAll(resRedistask)
+    }
+    if (resRediscamera != null) {
+      result.putAll(resRediscamera)
+    }
+    if (resRedisdataSource != null) {
+      result.putAll(resRedisdataSource)
+    }
     result
   }
 
@@ -243,7 +259,8 @@ class Search extends Pools {
             val task = searchRedis(TASK, rs.getSource.get("taskId").toString)
             val camera = searchRedis(CAMERA, rs.getSource.get("cameraId").toString)
             val dataSource = searchRedis(DATASOURCE, rs.getSource.get("dataSourceId").toString)
-            joinRedis(task, camera, dataSource)
+            val reResult = joinRedis(task, camera, dataSource)
+
             task
           }
         })
@@ -261,9 +278,9 @@ object Search {
 
   def main(args: Array[String]): Unit = {
     val sbe = new Search
-    //        sbe.searchElasticHBase("别克", "黄", "1", "true", "false", "false", "true", "true", "true", "false", "2017-04-10 15:37:02", "2017-04-20 15:37:02")
-    //    sbe.searchCarnumber("2017-04-20 15:30:14", "2017-04-25 15:30:14")
-    //    sbe.searchLicense("2017-04-20 15:30:14", "粤", "2")
+    //            sbe.searchElasticHBase("别克", "黄", "1", "true", "false", "false", "true", "true", "true", "false", "2017-04-10 15:37:02", "2017-04-20 15:37:02")
+    //        sbe.searchCarnumber("2017-04-20 15:30:14", "2017-04-25 15:30:14")
+//    sbe.searchLicense("2017-04-20 15:30:14", "粤", "2")
 
   }
 }
