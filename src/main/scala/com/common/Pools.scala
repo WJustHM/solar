@@ -45,7 +45,7 @@ trait Pools extends Logging with Serializable{
   }
 
   private def  initHbase : HbaseConnectionPool = {
-    println("===================> init Hbase ")
+//    println("===================> init Hbase ")
     val conf = HBaseConfiguration.create()
     conf.set("hbase.zookeeper.quorum",Constants.HBASE_ZOOKEEPER_QUORUM)
     conf.set("hbase.zookeeper.property.clientPort",Constants.HBASE_ZOOKEEPER_PROPERTY_CLIENTPOINT)
@@ -59,7 +59,7 @@ trait Pools extends Logging with Serializable{
   }
 
   private def initEs : EsConnectionPool = {
-    println("===================> init ES ")
+//    println("===================> init ES ")
     val  settings = Settings.builder()
     settings.put("cluster.name",Constants.ES_CLUSTER_NAME)
 
